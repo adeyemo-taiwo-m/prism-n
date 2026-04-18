@@ -1,0 +1,93 @@
+import React from 'react';
+import { createRouter, createRoute, createRootRoute, Outlet } from '@tanstack/react-router';
+import { LandingPage } from './pages/LandingPage';
+import { ExplanationPage } from './pages/ExplanationPage';
+import { SignupPage } from './pages/auth/SignupPage';
+import { LoginPage } from './pages/auth/LoginPage';
+import { OTPPage } from './pages/auth/OTPPage';
+import { AppLayout } from './components/layout/AppLayout';
+import { DiscoveryPage } from './pages/app/DiscoveryPage';
+import { TrackerPage } from './pages/app/TrackerPage';
+import { MarketAnalysisPage } from './pages/app/MarketAnalysisPage';
+
+export const rootRoute = createRootRoute({
+  component: () => <Outlet />,
+});
+
+export const landingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: LandingPage,
+});
+
+export const explanationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/how-it-works',
+  component: ExplanationPage,
+});
+
+export const signupRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/auth/signup',
+  component: SignupPage,
+});
+
+export const loginRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/auth/login',
+  component: LoginPage,
+});
+
+export const otpRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/auth/otp',
+  component: OTPPage,
+  validateSearch: (search: Record<string, unknown>) => {
+    return {
+      email: (search.email as string) || '',
+    };
+  },
+});
+
+export const appRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/app',
+  component: AppLayout,
+});
+
+export const discoverRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: '/',
+  component: DiscoveryPage,
+});
+
+export const trackerRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: '/tracker',
+  component: TrackerPage,
+});
+
+export const analysisRoute = createRoute({
+  getParentRoute: () => appRoute,
+  path: '/markets/$marketId',
+  component: MarketAnalysisPage,
+});
+
+const appRouteWithChildren = appRoute.addChildren([discoverRoute, trackerRoute, analysisRoute]);
+
+const routeTree = rootRoute.addChildren([
+  landingRoute,
+  explanationRoute,
+  signupRoute,
+  loginRoute,
+  otpRoute,
+  appRouteWithChildren,
+]);
+
+export const router = createRouter({ routeTree });
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router;
+  }
+}
