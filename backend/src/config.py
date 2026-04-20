@@ -11,7 +11,6 @@ class Settings(BaseSettings):
     BREVO_SENDER_NAME: str
     BREVO_EMAIL: str 
     DATABASE_URL: str
-    ADMIN_EMAIL: str
 
     BAYSE_API_KEY: str
 
